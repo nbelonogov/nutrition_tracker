@@ -21,6 +21,3 @@ def all_brackets(string: str) -> bool:
                 stack.remove('{')
             return False
     return not stack
-
-
-print(all_brackets('{}'))

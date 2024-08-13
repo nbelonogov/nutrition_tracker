@@ -14,3 +14,5 @@ urlpatterns = [
     path('meals/', MealList.as_view()),
     path('meals/<int:pk>/', MealDetail.as_view()),
 ]
+
+# посмотреть класс для view, чтобы list и get были из под коробки

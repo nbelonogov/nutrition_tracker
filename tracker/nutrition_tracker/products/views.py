@@ -61,7 +61,9 @@ class MealDetail(RetrieveUpdateDestroyAPIView):
 
 @login_required
 def meal_add(request, product_id):
+    # лучше использовать filter(id=product_id).first()
     product = Product.objects.get(id=product_id)
+   
     dishes = Meal.objects.filter(user=request.user, product=product)
 
     if not dishes.exists():
@@ -74,5 +76,6 @@ def meal_add(request, product_id):
 
 @login_required
 def meal_remove(request, meal_id):
+    # лучше использовать filter(id=product_id).first()
     meal = Meal.objects.get(id=meal_id)
     meal.delete()

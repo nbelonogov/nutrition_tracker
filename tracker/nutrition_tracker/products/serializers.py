@@ -52,6 +52,13 @@ class ProductSerializer(serializers.ModelSerializer):
         if value <= 0 or value > 1000:
             raise serializers.ValidationError("Введите допустимое значение")
         return value
+    
+    def validate(self, attrs):
+        for attr in attrs:
+            if attr in ['carbs', ...]:
+                if attr < 0 or attr > 99:
+                    raise serializers.ValidationError("Введите допустимое значение")
+        return attrs
 
 
 class MealSerializer(serializers.ModelSerializer):

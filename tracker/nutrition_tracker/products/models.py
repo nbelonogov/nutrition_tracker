@@ -9,6 +9,7 @@ class User(AbstractUser):
     ])
     weight = models.DecimalField(verbose_name='Вес', max_digits=3, decimal_places=1, null=True)
     height = models.IntegerField(verbose_name='Рост', null=True)
+    # если не хочешь писать null=True, то можно использовать default=..., тк это поле обязательно
 
 
 class ProductCategory(models.Model):
@@ -45,7 +46,7 @@ class Meal(models.Model):
         ('Ужин', 'Ужин')
     ])
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(to=Product, on_delete=models.CASCADE) # По идеи один прием пищи должен содержать несколько продуктов, Arrays[Product]
     weight = models.IntegerField(default=100)
 
     class Meta:

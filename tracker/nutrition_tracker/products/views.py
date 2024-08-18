@@ -1,5 +1,3 @@
-from django.contrib.auth.decorators import login_required
-
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 

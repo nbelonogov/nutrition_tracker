@@ -8,7 +8,7 @@ app_name = 'products'
 
 router = routers.DefaultRouter()
 router.register(r'meals', MealViewSet)
-router.register(r'users', UserViewSet)
+router.register(r'users', UserViewSet, basename='users')
 router.register(r'products', ProductViewSet)
 router.register(r'product-categories', ProductCategoryViewSet)
 

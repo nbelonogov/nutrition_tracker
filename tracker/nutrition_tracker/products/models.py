@@ -9,7 +9,6 @@ class User(AbstractUser):
     ])
     weight = models.DecimalField(verbose_name='Вес', max_digits=3, decimal_places=1, null=True)
     height = models.IntegerField(verbose_name='Рост', null=True)
-    # если не хочешь писать null=True, то можно использовать default=..., тк это поле обязательно
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -33,7 +32,7 @@ class Product(models.Model):
     fats = models.IntegerField(verbose_name='Жиры')
     carbs = models.IntegerField(verbose_name='Углеводы')
     category = models.ForeignKey(verbose_name='Категория', to=ProductCategory, on_delete=models.CASCADE)
-
+    weight = models.FloatField(default=100)
 
     @property
     def calories(self):
@@ -47,27 +46,50 @@ class Product(models.Model):
         return self.name
 
 
+#
 class Meal(models.Model):
     name = models.CharField(null=True, max_length=10, choices=[
         ('Завтрак', 'Завтрак'),
         ('Обед', 'Обед'),
         ('Ужин', 'Ужин')
     ])
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
-    # По идее один прием пищи должен содержать несколько продуктов, Arrays[Product]
-    weight = models.IntegerField(default=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='meals')
+    products = models.ManyToManyField(Product, related_name='meals')
+    weight = models.PositiveIntegerField()
+    total_calories = models.PositiveIntegerField()
 
     def __str__(self):
         return f"{self.name} пользователя {self.user.username}"
 
-    class Meta:
-        verbose_name = 'Прием пищи'
-        verbose_name_plural = 'Приемы пищи'
+    def calculate_total_calories(self):
+        total_calories = 0
+        for product in self.products.all():
+            total_calories += (product.calories * self.weight)/100
+        self.total_calories = total_calories
+        self.save()
 
-    def sum_calories(self):
-        return self.product.calories * self.weight/100
 
-    def total_calories_sum(self):
-        food = Meal.objects.filter(user=self.user)
-        return sum(dish.sum_calories() for dish in food)
+# class Meal(models.Model):
+#     name = models.CharField(null=True, max_length=10, choices=[
+#         ('Завтрак', 'Завтрак'),
+#         ('Обед', 'Обед'),
+#         ('Ужин', 'Ужин')
+#     ])
+#     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+#     product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
+#     # По идее один прием пищи должен содержать несколько продуктов, Arrays[Product]
+#     weight = models.IntegerField(default=100)
+#
+#     def __str__(self):
+#         return f"{self.name} пользователя {self.user.username}"
+#
+#     class Meta:
+#         verbose_name = 'Прием пищи'
+#         verbose_name_plural = 'Приемы пищи'
+#
+#     def sum_calories(self):
+#         return self.product.calories * self.weight/100
+#
+#     def total_calories_sum(self):
+#         food = Meal.objects.filter(user=self.user)
+#         return sum(dish.sum_calories() for dish in food)

@@ -53,21 +53,3 @@ class MealViewSet(ModelViewSet):
         return (permission() for permission in permission_classes)
 
 
-@login_required
-def meal_add(request, product_id):
-    product = Product.objects.filter(id=product_id).first()
-
-    dishes = Meal.objects.filter(user=request.user, product=product)
-
-    if not dishes.exists():
-        Meal.objects.create(user=request.user, product=product, weight=100)
-    else:
-        dish = dishes.first()
-        dish.weight += 100
-        dish.save()
-
-
-@login_required
-def meal_remove(request, meal_id):
-    meal = Meal.objects.filter(id=meal_id).first()
-    meal.delete()

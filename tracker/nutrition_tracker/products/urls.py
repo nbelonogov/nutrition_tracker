@@ -7,9 +7,9 @@ from products.views import ProductViewSet, ProductCategoryViewSet, UserViewSet, 
 app_name = 'products'
 
 router = routers.DefaultRouter()
-router.register(r'meals', MealViewSet)
-router.register(r'users', UserViewSet, basename='users')
-router.register(r'products', ProductViewSet)
+router.register(r'meals', MealViewSet, 'meals')
+router.register(r'users', UserViewSet, 'users')
+router.register(r'products', ProductViewSet, 'products')
 router.register(r'product-categories', ProductCategoryViewSet)
 
 urlpatterns = [

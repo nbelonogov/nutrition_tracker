@@ -19,13 +19,13 @@ class UserViewSetTestCase(TestCase):
 
     def test_list_users_as_admin(self):
         self.client.login(user=self.admin_user)
-        url = reverse('users')
+        url = reverse('products:users-list')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)
 
     def test_list_users_as_regular_user(self):
         self.client.login(user=self.regular_user)
-        url = reverse('users-list')
+        url = reverse('products:users-list')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

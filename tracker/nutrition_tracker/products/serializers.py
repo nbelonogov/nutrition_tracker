@@ -44,6 +44,7 @@ class ProductSerializer(serializers.ModelSerializer):
                                    message="Название продукта должно быть на русском языке.")])
 
     def validate_calories(self, value):
+        # можно вынести также  вописание полей
         if value <= 0 or value > 10000:
             raise serializers.ValidationError("Значение калорий должно быть от 0 до 10000")
         return value

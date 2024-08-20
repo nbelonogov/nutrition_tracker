@@ -32,6 +32,7 @@ class Product(models.Model):
     fats = models.IntegerField(verbose_name='Жиры')
     carbs = models.IntegerField(verbose_name='Углеводы')
     category = models.ForeignKey(verbose_name='Категория', to=ProductCategory, on_delete=models.CASCADE)
+    #убрать вес, тк это указывается в приеме пищи
     weight = models.FloatField(default=100)
 
     @property

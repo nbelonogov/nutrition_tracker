@@ -35,43 +35,43 @@ class ProductSerializer(serializers.ModelSerializer):
     proteins = serializers.IntegerField(label='Белки', min_value=0, max_value=99, error_messages=error_messages)
     fats = serializers.IntegerField(label='Жиры', min_value=0, max_value=99, error_messages=error_messages)
     carbs = serializers.IntegerField(label='Углеводы', min_value=0, max_value=99, error_messages=error_messages)
-    category = serializers.SlugRelatedField(label='Категория', slug_field='name',
+    category = serializers.SlugRelatedField(label='Категория',
+                                            slug_field='name',
                                             queryset=ProductCategory.objects.all())
-    calories = serializers.ReadOnlyField()
+    calories = serializers.IntegerField(label='Калории',
+                                        read_only=True,
+                                        min_value=0,
+                                        max_value=10000,
+                                        error_messages={
+                                            'min_value': 'Значение должно быть положительным.',
+                                            'max_value': 'Значение не должно превышать 10000.'
+                                        })
     name = serializers.CharField(
         label='Название',
         validators=[RegexValidator(r'^[А-Яа-яЁё\s0-9]+$',
                                    message="Название продукта должно быть на русском языке.")])
 
-    def validate_calories(self, value):
-        # можно вынести также  вописание полей
-        if value <= 0 or value > 10000:
-            raise serializers.ValidationError("Значение калорий должно быть от 0 до 10000")
-        return value
 
-    # Падает с TypeError (пытаемся сравнить str < int и str > int)
-    # def validate(self, attrs):
-    #     for attr in attrs:
-    #         if attr in ['proteins', 'fats', 'carbs']:
-    #             if attr < 0 or attr > 99:
-    #                 raise serializers.ValidationError("Введите допустимое значение")
-    #     return attrs
-
+# class MealSerializer(serializers.ModelSerializer):
+#     products = ProductSerializer(many=True, read_only=True)
+#     user = serializers.PrimaryKeyRelatedField(read_only=True)
+#     total_calories = serializers.ReadOnlyField()
+#
+#     class Meta:
+#         model = Meal
+#         fields = ('id', 'name', 'user', 'products', 'weight', 'total_calories')
 
 class MealSerializer(serializers.ModelSerializer):
     products = ProductSerializer(many=True)
     user = serializers.PrimaryKeyRelatedField(read_only=True)
-    total_calories = serializers.ReadOnlyField()
+    total_calories = serializers.SerializerMethodField()
 
     class Meta:
         model = Meal
-        fields = ('id', 'user', 'products', 'weight', 'total_calories')
+        fields = ['id', 'name', 'user', 'products', 'weight', 'total_calories']
 
-    def create(self, validated_data):
-        products = validated_data.pop('products')
-        meal = Meal.objects.create(**validated_data)
-        for product in products:
-            product, _ = Product.objects.get_or_create(**product)
-            meal.products.add(product)
-        meal.calculate_total_calories()
-        return meal
+    def get_total_calories(self, obj):
+        total_calories = 0
+        for product in obj.products.all():
+            total_calories += product.calories()
+        return total_calories

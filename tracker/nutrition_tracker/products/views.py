@@ -45,9 +45,7 @@ class MealViewSet(ModelViewSet):
 
     def get_permissions(self):
         if self.action in ('create', 'update', 'partial_update', 'destroy'):
-            permission_classes = (IsAuthenticated, IsOwner )
+            permission_classes = (IsAuthenticated, IsOwner)
         else:
             permission_classes = (IsAdminOrReadOnly, IsOwner)
         return (permission() for permission in permission_classes)
-
-

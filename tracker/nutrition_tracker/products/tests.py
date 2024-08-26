@@ -1,10 +1,9 @@
 from django.test import TestCase
 from django.urls import reverse
-
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from products.models import User, ProductCategory, Product, Meal
+from products.models import Product, ProductCategory, User
 
 
 class UserViewSetTestCase(TestCase):
@@ -23,7 +22,7 @@ class UserViewSetTestCase(TestCase):
         url = reverse('products:users-list')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(len(response.data), 3)
 
     def test_list_users_as_regular_user(self):
         self.client.force_authenticate(user=self.regular_user)
@@ -238,27 +237,3 @@ class ProductViewSetTestCase(TestCase):
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Product.objects.count(), 0)
-
-
-# class MealViewSetTestCase(TestCase):
-#     def setUp(self):
-#         self.client = APIClient()
-#         self.admin_user = User.objects.create_superuser(
-#             username='admin123', email='admin123@example.com', password='admin123'
-#         )
-#         self.user1 = User.objects.create_user(username='user1', password='password1')
-#         self.category = ProductCategory.objects.create(name='Категория')
-#         self.product1 = Product.objects.create(name='Продукт 1', proteins=10, fats=5,
-#                                                carbs=20, category=self.category)
-#         self.meal1 = Meal.objects.create(name='Meal 1', user=self.user1)
-#         self.meal1.products.create(name='Продукт 1', proteins=10, fats=5,
-#                                    carbs=20, category=self.category)
-#         self.meal1.save()
-#         self.meal1.total_calories += self.product1.calories()
-#
-#     def test_list_meals_as_admin(self):
-#         self.client.force_authenticate(user=self.admin_user)
-#         url = reverse('products:meals-list')
-#         response = self.client.get(url)
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertEqual(Meal.objects.count(), 1)

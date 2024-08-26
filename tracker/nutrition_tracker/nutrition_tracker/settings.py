@@ -9,8 +9,10 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-from decouple import config
 from pathlib import Path
+
+from decouple import config
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +28,6 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
-
 
 # Application definition
 
@@ -83,7 +84,7 @@ DATABASES = {
         "NAME": "tracker_db",
         "USER": "tracker_user",
         "PASSWORD": "tracker_password",
-        "HOST": "localhost",
+        "HOST": "pgdb",
         "PORT": 5432,
     }
 }
@@ -135,3 +136,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'products.User'
 
 # Django REST framework
+
+DEFAULT_CHARSET = 'utf-8'
+FILE_CHARSET = 'utf-8'

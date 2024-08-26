@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from products.models import User, Product, ProductCategory, Meal
+from products.models import Meal, Product, ProductCategory, User
 
 admin.site.register(User)
 admin.site.register(ProductCategory)
@@ -15,4 +15,3 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     ordering = ('name',)
     list_filter = ('category',)
-

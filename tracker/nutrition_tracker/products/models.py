@@ -1,6 +1,5 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models import F
 
 
 class User(AbstractUser):
@@ -46,28 +45,31 @@ class Product(models.Model):
         return self.name
 
 
-#
+class MealQuerySet(models.QuerySet):
+    def total_proteins(self):
+        return sum(meal.sum_proteins() for meal in self)
+
+    def total_fats(self):
+        return sum(meal.sum_fats() for meal in self)
+
+    def total_carbs(self):
+        return sum(meal.sum_carbs() for meal in self)
+
+    def total_calories(self):
+        return sum(meal.sum_calories() for meal in self)
+
+
 class Meal(models.Model):
     name = models.CharField(null=True, max_length=10, choices=[
         ('Завтрак', 'Завтрак'),
         ('Обед', 'Обед'),
         ('Ужин', 'Ужин')
     ])
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='meals')
-    products = models.ManyToManyField(Product, related_name='meals')
-    weight = models.PositiveIntegerField(default=100)
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    products = models.ManyToManyField(to=Product, related_name='meals')
+    weight = models.PositiveIntegerField(default=0)
 
-    class Meta:
-        verbose_name = 'Прием пищи'
-        verbose_name_plural = 'Приемы пищи'
+    objects = MealQuerySet.as_manager()
 
     def __str__(self):
-        return f"{self.name} пользователя {self.user.username}"
-
-    def products_add(self, product, weight):
-        self.products.add(product, through_defaults={'weight': weight})
-        self.save()
-
-    @property
-    def total_calories(self):
-        return self.products.aggregate(total_calories=sum(F('calories') * F('meal__weight') / 100))['total_calories']
+        return f'Прием пищи {self.user.username}'

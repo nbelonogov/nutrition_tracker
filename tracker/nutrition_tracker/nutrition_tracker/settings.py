@@ -81,9 +81,9 @@ WSGI_APPLICATION = 'nutrition_tracker.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "project_db",
-        "USER": "project_user",
-        "PASSWORD": "project_password",
+        "NAME": "tracker_db",
+        "USER": "tracker_username",
+        "PASSWORD": "tracker_password",
         "HOST": "pgdb",
         "PORT": 5432,
     }

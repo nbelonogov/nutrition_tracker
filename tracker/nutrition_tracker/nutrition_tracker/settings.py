@@ -81,9 +81,9 @@ WSGI_APPLICATION = 'nutrition_tracker.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "tracker_db",
-        "USER": "tracker_user",
-        "PASSWORD": "tracker_password",
+        "NAME": "project_db",
+        "USER": "project_user",
+        "PASSWORD": "project_password",
         "HOST": "pgdb",
         "PORT": 5432,
     }
@@ -134,8 +134,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Users
 
 AUTH_USER_MODEL = 'products.User'
-
-# Django REST framework
-
-DEFAULT_CHARSET = 'utf-8'
-FILE_CHARSET = 'utf-8'

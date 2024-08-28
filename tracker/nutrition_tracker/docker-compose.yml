@@ -17,11 +17,9 @@ services:
     image: postgres:16
     # Задание переменных окружения для контейнера с postgres
     environment:
-      - POSTGRES_DB=tracker_db
+      - POSTGRES_DB=track_db
       - POSTGRES_USER=tracker_user
       - POSTGRES_PASSWORD=tracker_password
-      - LC_ALL=C.UTF-8
-      - LANG=C.UTF-8
      # Задание имени контейнера для сервиса pgdb
     container_name: pgdb
      # Связывание тома с директорией в контейнере для сохранения данных postgres

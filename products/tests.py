@@ -3,7 +3,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from products.models import Product, ProductCategory, User
+from products.models import Product, ProductCategory, User, Meal
 
 
 class UserViewSetTestCase(TestCase):

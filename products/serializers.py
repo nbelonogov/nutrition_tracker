@@ -1,12 +1,10 @@
 from django.core.validators import RegexValidator
 from rest_framework import serializers
 
-from products.models import Meal, Product, ProductCategory, User
+from products.models import Meal, Product, ProductCategory, User, MealProduct
 
 
 class UserSerializer(serializers.ModelSerializer):
-    meals = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-
     class Meta:
         model = User
         fields = ('id', 'username', 'meals', 'is_staff')
@@ -52,24 +50,27 @@ class ProductSerializer(serializers.ModelSerializer):
                                    message="Название продукта должно быть на русском языке.")])
 
 
+
+class MealProductSerializer(serializers.ModelSerializer):
+    product = ProductSerializer()
+
+    class Meta:
+        model = MealProduct
+        fields = ['product', 'weight']
+
+
 class MealSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(slug_field='username', read_only=True)
-    total_proteins = serializers.SerializerMethodField()
-    total_fats = serializers.SerializerMethodField()
-    total_carbs = serializers.SerializerMethodField()
-    total_calories = serializers.SerializerMethodField()
+    meal_products = MealProductSerializer(many=True, read_only=True)
+    total_proteins = serializers.FloatField(read_only=True)
+    total_fats = serializers.FloatField(read_only=True)
+    total_carbs = serializers.FloatField(read_only=True)
+    total_calories = serializers.FloatField(read_only=True)
 
     class Meta:
         model = Meal
         fields = ['id', 'name', 'user', 'products', 'weight', 'total_proteins',
                   'total_fats', 'total_carbs', 'total_calories']
-
-    def create(self, validated_data):
-        products = validated_data.pop('products')
-        meal = Meal.objects.create(**validated_data)
-        meal.products.set(products)
-        meal.save()
-        return meal
 
     def get_total_proteins(self, obj):
         return sum(product.proteins for product in obj.products.all()) * obj.weight/100
@@ -82,13 +83,3 @@ class MealSerializer(serializers.ModelSerializer):
 
     def get_total_calories(self, obj):
         return sum(product.calories for product in obj.products.all()) * obj.weight/100
-
-
-class AddProductsToMealSerializer(serializers.ModelSerializer):
-    product_ids = serializers.ListField(child=serializers.IntegerField())
-
-    def update(self, instance, validated_data):
-        products = Product.objects.filter(id__in=validated_data['product_ids'])
-        instance.products.add(*products)
-        instance.save()
-        return instance

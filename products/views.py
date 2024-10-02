@@ -14,6 +14,12 @@ class UserViewSet(ModelViewSet):
     permission_classes = [IsAdminUser]
 
 
+class ProductCategoryViewSet(ModelViewSet):
+    queryset = ProductCategory.objects.all()
+    serializer_class = ProductCategorySerializer
+    permission_classes = [IsAdminOrReadOnly]
+
+
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -26,15 +32,13 @@ class ProductViewSet(ModelViewSet):
         return (permission() for permission in permission_classes)
 
 
-class ProductCategoryViewSet(ModelViewSet):
-    queryset = ProductCategory.objects.all()
-    serializer_class = ProductCategorySerializer
-    permission_classes = [IsAdminOrReadOnly]
-
-
-class MealListView(generics.ListAPIView):
+class MealViewSet(ModelViewSet):
+    queryset = Meal.objects.all()
     serializer_class = MealSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     def get_queryset(self):
         if self.request.user.is_staff:
@@ -42,18 +46,3 @@ class MealListView(generics.ListAPIView):
         else:
             return Meal.objects.filter(user=self.request.user)
 
-
-class MealCreateView(generics.CreateAPIView):
-    serializer_class = MealSerializer
-    permission_classes = [IsAuthenticated]
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
-
-class MealDetailView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = MealSerializer
-    permission_classes = [IsOwner]
-
-    def get_queryset(self):
-        return Meal.objects.filter(user=self.request.user)

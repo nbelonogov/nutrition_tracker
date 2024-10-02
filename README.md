@@ -38,12 +38,7 @@ This command will:
 * Start the PostgreSQL and Django containers.
 * Automatically apply database migrations.
 
-### 4. Load Initial Data (Optional)
-```bash
-docker-compose exec web python manage.py loaddata <your_fixture_file>.json
-```
-
-### 5.Access the Application
+### 4.Access the Application
 Once the application is running, you can access it at:
 ```
 http://localhost:8000
